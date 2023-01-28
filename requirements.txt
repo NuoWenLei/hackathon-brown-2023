@@ -32,6 +32,7 @@ importlib-metadata==6.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 jwcrypto==1.4.2
+loguru==0.6.0
 MarkupSafe==2.1.2
 msgpack==1.0.4
 numpy==1.21.6
