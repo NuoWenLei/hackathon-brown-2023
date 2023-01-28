@@ -13,10 +13,11 @@ def get_unique_id():
 	doc_id = str(uuid.uuid4())
 	return doc_id + "-" + str(int(datetime.datetime.utcnow().timestamp()))
 
-def download_image_to_filename(fp):
-	blob = bucket.blob("something.jpg")
-	blob.download_to_filename(fp)
-
+def download_image_to_filename(paths, fp):
+	for p in paths:
+		blob = bucket.blob(p)
+		blob.download_to_filename(fp + "/" + p)
+	
 def upload_image_bytearray_to_filename(bytearr, fp):
 	blob = bucket.blob(fp)
 	blob.upload_from_file(bytearr, content_type = "image/jpeg")
@@ -33,6 +34,13 @@ def upload_photo_data(data):
 	dataDoc = get_unique_id()
 	col.document(dataDoc).create(data)
 	return dataDoc
+
+def get_all_photos_in_location(locationRef):
+	docs = db.collection("photos").where("location", "==", locationRef).stream()
+	photoDocs = []
+	for doc in docs:
+		photoDocs.append(doc.to_dict())
+	return photoDocs
 
 
 
