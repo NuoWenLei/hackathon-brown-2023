@@ -43,6 +43,12 @@ def get_photo(ref: str):
     photo["public_url"] = f"https://firebasestorage.googleapis.com/v0/b/hackathon2023-brown.appspot.com/o/{photo['photoRef']}?alt=media"
     return photo
 
+@app.get("/collage")
+def get_collage(ref: str):
+    collage = get_document("collage", ref)
+    collage["public_url"] = f"https://firebasestorage.googleapis.com/v0/b/hackathon2023-brown.appspot.com/o/{collage['collageRef']}?alt=media"
+    return collage
+
 @app.post("/location")
 def add_pin(
     lon: str = Form(...),
