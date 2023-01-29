@@ -1,4 +1,5 @@
 from turtle import width
+from typing import Union, List
 from PIL import Image, ImageFile
 from random import choice
 from tqdm import tqdm
@@ -24,7 +25,7 @@ class Collager:
     '''
     file_extensions = ["jpg", "jpeg", "png", "bmp"]
 
-    def __init__(self, path: str | list[str]) -> None:
+    def __init__(self, path: Union[str, List[str]]) -> None:
         '''
         Creates a new collager instance
         - scans the given path / multiple paths for images
@@ -32,34 +33,33 @@ class Collager:
         '''
         self.update_path(path)
 
-    def update_path(self, path: str | list[str]) -> None:
+    def update_path(self, path: Union[str, List[str]]) -> None:
         '''
         Updates the path and scans it for images
         Then updates the image_data with new aspect ratios
         '''
-        match path:
-            case str():
-                self.image_path = [path]
-                logger.debug(f"updated path to {path}")
-                self.image_files = self.get_files(path, self.file_extensions)
-                logger.debug(f"found {len(self.image_files)} images")
-                self.image_data = self.get_aspect_ratios(self.image_files)
-                logger.success(
-                    f"found {len(self.image_data)} images that can be used")
-            case list():
-                self.image_path = path
-                logger.debug(f"updated path to {path}")
-                self.image_files = []
-                for p in path:
-                    self.image_files += self.get_files(p, self.file_extensions)
-                logger.debug(f"found {len(self.image_files)} images")
-                self.image_data = self.get_aspect_ratios(self.image_files)
-                logger.success(
-                    f"found {len(self.image_data)} images that can be used")
-            case _:
-                raise TypeError("path must be a string or a list of strings")
+        if type(path) == str:
+            self.image_path = [path]
+            logger.debug(f"updated path to {path}")
+            self.image_files = self.get_files(path, self.file_extensions)
+            logger.debug(f"found {len(self.image_files)} images")
+            self.image_data = self.get_aspect_ratios(self.image_files)
+            logger.success(
+                f"found {len(self.image_data)} images that can be used")
+        elif type(path) == list:
+            self.image_path = path
+            logger.debug(f"updated path to {path}")
+            self.image_files = []
+            for p in path:
+                self.image_files += self.get_files(p, self.file_extensions)
+            logger.debug(f"found {len(self.image_files)} images")
+            self.image_data = self.get_aspect_ratios(self.image_files)
+            logger.success(
+                f"found {len(self.image_data)} images that can be used")
+        else:
+            raise TypeError("path must be a string or a list of strings")
 
-    def get_files(self, path: str, ext: list[str]) -> list[str]:
+    def get_files(self, path: str, ext: List[str]) -> List[str]:
         '''
         Get all files in path with extension in ext, exclude folders, hidden files, etc.
         '''
@@ -81,7 +81,7 @@ class Collager:
             ]
         ))
 
-    def get_aspect_ratios(self, images: list[str]) -> list[dict[str, float]]:
+    def get_aspect_ratios(self, images: List[str]):
         '''
         Get aspect ratios of images
 
@@ -124,8 +124,8 @@ class Collager:
             f"resize: [ {width:4} × {height:<4} ]")
         return img.crop(size).resize((width, height), scale_method)
 
-    def create_line(self, image_data: list[dict[str, float]], width: int, line_height: int, ratio_delta: float = 0.05,
-                    scale_method: Image.Resampling = Image.Resampling.LANCZOS) -> tuple[Image.Image, int]:
+    def create_line(self, image_data, width: int, line_height: int, ratio_delta: float = 0.05,
+                    scale_method: Image.Resampling = Image.Resampling.LANCZOS):
         '''
         Create line of random images from images list with given width and height
 
@@ -266,16 +266,17 @@ if __name__ == "__main__":
 
     # run collage generator
     size = args.size.lower().split('x')
-    match size:
-        case ["screen"]:
-            def get_screen_size(): pass  # TODO: получить размер экрана
-            collage = collager.collage(1920, 1080, args.lines)
-        case [width, height]:
-            collage = collager.collage(int(width), int(height), args.lines)
-        case [lenght]:
-            collage = collager.collage(int(lenght), int(lenght), args.lines)
-        case _:
-            raise ValueError(f"invalid size {args.size}")
+    if size == ["screen"]:
+        def get_screen_size(): pass  # TODO: получить размер экрана
+        collage = collager.collage(1920, 1080, args.lines)
+    elif len(size) == 2:
+        width, height = size
+        collage = collager.collage(int(width), int(height), args.lines)
+    elif len(size) == 1:
+        lenght = size[0]
+        collage = collager.collage(int(lenght), int(lenght), args.lines)
+    else:
+        raise ValueError(f"invalid size {args.size}")
 
     collage.save("collage.png")
 else:
