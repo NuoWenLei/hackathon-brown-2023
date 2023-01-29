@@ -56,7 +56,7 @@ def add_pin(
         "lon": lon,
         "lat": lat,
         "w3w": w3w['words'],
-        "num_images": 1
+        "num_images": 0
     }
     placeRef = upload_document("places", place_data)
 
