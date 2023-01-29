@@ -31,8 +31,9 @@ def get_all_locations():
 	return locations
 
 def get_location_w3w(w3w):
-	doc = db.collection("places").where("w3w", "==", w3w).get().to_dict()
-	return doc
+	doc = db.collection("places").where("w3w", "==", w3w).get()[0]
+	print(doc)
+	return doc.to_dict()
 
 def get_all_photos_in_location(locationRef):
 	docs = db.collection("photos").where("location", "==", locationRef).stream()
