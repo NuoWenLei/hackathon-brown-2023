@@ -41,7 +41,8 @@ def get_pin_w3w(w3w: str = Form(...)):
 def add_pin(
     lon: str = Form(...),
     lat: str = Form(...),
-    imageRef: str = Form(...)):
+    file_: str = Form(...),
+    comment: str = Form(...)):
 
     w3w = locationToW3W(lon, lat)
 
@@ -49,10 +50,14 @@ def add_pin(
         "lon": lon,
         "lat": lat,
         "w3w": w3w,
-        "latest_image": imageRef,
         "num_images": 1
     }
     placeRef = upload_document("places", place_data)
+
+    photoRef = post_photo(placeRef, comment, file_)
+
+    update_document("places", placeRef, {"latest_image": photoRef})
+
     return placeRef
 
 @app.post("/collage")
