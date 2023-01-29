@@ -1,4 +1,3 @@
-from turtle import width
 from typing import Union, List
 from PIL import Image, ImageFile
 from random import choice
