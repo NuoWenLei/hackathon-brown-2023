@@ -201,7 +201,7 @@ class Collager:
         - add duplicates control (e.g. no duplicates in a line, no duplicates in a neighbor lines, etc.)
         '''
         line_height = height // lines
-        collage = Image.new("RGBA", (width, line_height * lines), color="#3A1600")
+        collage = Image.new("RGB", (width, line_height * lines), color="#3A1600")
         logger.debug(f"height: {height}, line_height: {line_height}")
 
         for line_n in tqdm(range(lines), desc="creating lines"):
