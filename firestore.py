@@ -31,7 +31,7 @@ def get_all_locations():
 	return locations
 
 def get_location_w3w(w3w):
-	doc = db.collection("places").where("w3w", "==", w3w).get()
+	doc = db.collection("places").where("w3w", "==", w3w).get().to_dict()
 	return doc
 
 def get_all_photos_in_location(locationRef):
@@ -52,7 +52,7 @@ def update_document(collection, id, data):
 	ref.update(data)
 
 def get_document(collection, id):
-	return db.collection(collection).document(id).get()
+	return db.collection(collection).document(id).get().to_dict()
 
 
 

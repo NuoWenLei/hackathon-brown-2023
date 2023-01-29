@@ -20,8 +20,6 @@ from locationVerifier import locationToW3W
 # See docs at:
 # https://fastapi.tiangolo.com/#installation
 
-# See interactive api at:
-# http://127.0.0.1:8000/docs
 
 app = FastAPI()
 
