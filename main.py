@@ -33,7 +33,7 @@ def get_pins():
     return locations
 
 @app.get("/location")
-def get_pin_w3w(w3w: str = Form(...)):
+def get_pin_w3w(w3w: str):
     location = get_location_w3w(w3w)
     return location
 
