@@ -49,7 +49,7 @@ def add_pin(
     place_data = {
         "lon": lon,
         "lat": lat,
-        "w3w": w3w,
+        "w3w": w3w['words'],
         "num_images": 1
     }
     placeRef = upload_document("places", place_data)
@@ -66,7 +66,7 @@ def post_collage(
     file_: str = Form(...),
     comments: list = Form(...)
     ):
-    
+
     im = Image.open(io.BytesIO(base64.b64decode(re.sub('^data:image/.+;base64,', '', file_))))
     im_resized_byte_array = image_to_byte_array(im)
     filename = get_unique_id() + ".jpg"
