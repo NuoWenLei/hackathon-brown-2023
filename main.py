@@ -75,7 +75,9 @@ def add_pin(
 
     photoRef = post_photo(placeRef, comment, file_)
 
-    update_document("places", placeRef, {"latest_image": photoRef, "collageRef": photoRef})
+    collageRef = post_collage(placeRef, file_, [])
+
+    update_document("places", placeRef, {"latest_image": photoRef, "collageRef": collageRef})
 
     return placeRef
 
