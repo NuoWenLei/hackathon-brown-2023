@@ -10,7 +10,10 @@ def create_collage_in_location(location):
     # [{'location': 'edTNI7cej0YFVYHfA5xe',
     #   'photoref': 'something.jpg',
     #   'username': 'nlei'}]
+    imageInfos = sorted(imageInfos, key=lambda d: d['timestep']) # in ascending order
     photorefs = [ imageInfo['photoref'] for imageInfo in imageInfos ]
+    # photorefs = [ imageInfo['timestep'] for imageInfo in imageInfos ]
+    comments_from_old_to_new = [ imageInfo['comments'] for imageInfo in imageInfos ]
 
     imagesPath = "/Users/air17/Documents/showCollageAPI/dogs"
     download_image_to_filename(photorefs, imagesPath)
@@ -27,6 +30,6 @@ def create_collage_in_location(location):
     collage.save(buffered, format="JPEG")
     collage_str = base64.b64encode(buffered.getvalue())
 
-    requests.post("127...", data={'location': location, 'file_': collage_str, 'collage': True})
+    requests.post("http://139.144.57.146:8000/collage", data={'locationID': location, 'file_': collage_str, 'comments': comments_from_old_to_new})
 
 create_collage_in_location("edTNI7cej0YFVYHfA5xe")
