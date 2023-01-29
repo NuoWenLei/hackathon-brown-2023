@@ -97,7 +97,7 @@ def post_photo(
     locationDoc = get_document("places", locationId)
 
     im = Image.open(io.BytesIO(base64.b64decode(re.sub('^data:image/.+;base64,', '', file_))))
-    im_resized_byte_array = image_to_byte_array(im)
+    im_resized_byte_array = image_to_byte_array(im.convert("RGB"))
     filename = get_unique_id() + ".jpg"
 
     fileRef = upload_image_bytearray_to_filename(im_resized_byte_array, filename)
