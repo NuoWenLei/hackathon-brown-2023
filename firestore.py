@@ -35,12 +35,30 @@ def upload_photo_data(data):
 	col.document(dataDoc).create(data)
 	return dataDoc
 
+def get_all_locations():
+	docs = db.collection("places").stream()
+	locations = []
+	for doc in docs:
+		locations.append(doc.to_dict())
+	return locations
+
+def get_location_w3w(w3w):
+	doc = db.collection("places").where("w3w", "==", w3w).get()
+	return doc
+
 def get_all_photos_in_location(locationRef):
 	docs = db.collection("photos").where("location", "==", locationRef).stream()
 	photoDocs = []
 	for doc in docs:
 		photoDocs.append(doc.to_dict())
 	return photoDocs
+
+def update_document(collection, id, data):
+	ref = db.collection(collection).document(id)
+	ref.update(data)
+
+def get_document(collection, id):
+	return db.collection(collection).document(id).get()
 
 
 
