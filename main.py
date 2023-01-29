@@ -7,7 +7,7 @@ from fastapi import FastAPI, File, UploadFile, Form
 from pydantic import BaseModel
 from firestore import upload_image_bytearray_to_filename, get_unique_id,\
     get_all_locations, get_location_w3w, update_document, get_document, \
-        upload_document
+        upload_document, get_all_photos_in_location
 from locationVerifier import locationToW3W
 
 
@@ -49,6 +49,13 @@ def get_collage(ref: str):
     collage["public_url"] = f"https://firebasestorage.googleapis.com/v0/b/hackathon2023-brown.appspot.com/o/{collage['collageRef']}?alt=media"
     return collage
 
+@app.get("/photos")
+def get_photos(locationId: str):
+    photos = get_all_photos_in_location(locationId)
+    for photo in photos:
+        photo["public_url"] = f"https://firebasestorage.googleapis.com/v0/b/hackathon2023-brown.appspot.com/o/{photo['photoRef']}?alt=media"
+    return photos
+
 @app.post("/location")
 def add_pin(
     lon: str = Form(...),
@@ -62,13 +69,13 @@ def add_pin(
         "lon": lon,
         "lat": lat,
         "w3w": w3w['words'],
-        "num_images": 0
+        "num_images": 0,
     }
     placeRef = upload_document("places", place_data)
 
     photoRef = post_photo(placeRef, comment, file_)
 
-    update_document("places", placeRef, {"latest_image": photoRef})
+    update_document("places", placeRef, {"latest_image": photoRef, "collageRef": photoRef})
 
     return placeRef
 
