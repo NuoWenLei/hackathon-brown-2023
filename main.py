@@ -64,12 +64,9 @@ def add_pin(
 def post_collage(
     locationId: str = Form(...),
     file_: str = Form(...),
-    comments: list = Form(...),
-    timestamps: list = Form(...)
+    comments: list = Form(...)
     ):
-
-    locationDoc = get_document("places", locationId)
-
+    
     im = Image.open(io.BytesIO(base64.b64decode(re.sub('^data:image/.+;base64,', '', file_))))
     im_resized_byte_array = image_to_byte_array(im)
     filename = get_unique_id() + ".jpg"
@@ -79,7 +76,6 @@ def post_collage(
         "location": locationId,
         "collageRef": fileRef,
         "comments": comments,
-        "timestamps": timestamps,
         "timestamp": datetime.datetime.utcnow().timestamp()
     }
 
