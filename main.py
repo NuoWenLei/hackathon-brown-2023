@@ -37,6 +37,12 @@ def get_pin_w3w(w3w: str):
     location = get_location_w3w(w3w)
     return location
 
+@app.get("/photo")
+def get_photo(ref: str):
+    photo = get_document("photos", ref)
+    photo["public_url"] = f"https://firebasestorage.googleapis.com/v0/b/hackathon2023-brown.appspot.com/o/{photo['photoRef']}?alt=media"
+    return photo
+
 @app.post("/location")
 def add_pin(
     lon: str = Form(...),
