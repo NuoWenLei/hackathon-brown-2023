@@ -27,19 +27,25 @@ def get_all_locations():
 	docs = db.collection("places").stream()
 	locations = []
 	for doc in docs:
-		locations.append(doc.to_dict())
+		d = doc.to_dict()
+		d["_id"] = doc.id
+		locations.append(d)
 	return locations
 
 def get_location_w3w(w3w):
 	doc = db.collection("places").where("w3w", "==", w3w).get()[0]
 	print(doc)
-	return doc.to_dict()
+	d = doc.to_dict()
+	d["_id"] = doc.id
+	return d
 
 def get_all_photos_in_location(locationRef):
 	docs = db.collection("photos").where("location", "==", locationRef).stream()
 	photoDocs = []
 	for doc in docs:
-		photoDocs.append(doc.to_dict())
+		d = doc.to_dict()
+		d["_id"] = doc.id
+		photoDocs.append(d)
 	return photoDocs
 
 def upload_document(collection, data):
@@ -53,7 +59,9 @@ def update_document(collection, id, data):
 	ref.update(data)
 
 def get_document(collection, id):
-	return db.collection(collection).document(id).get().to_dict()
+	doc = db.collection(collection).document(id).get().to_dict()
+	doc["_id"] = id
+	return doc
 
 
 
