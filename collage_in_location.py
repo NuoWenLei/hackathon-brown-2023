@@ -22,7 +22,7 @@ def create_collage_in_location(location):
 
         # make a collage img
         width, height = (1920, 1080)
-        lines = 5
+        lines = 3
         collager = Collager(imagesPath)
         collage = collager.collage(width, height, lines)
     collage = collage.convert("RGB")
