@@ -23,18 +23,6 @@ def upload_image_bytearray_to_filename(bytearr, fp):
 	blob.upload_from_file(bytearr, content_type = "image/jpeg")
 	return fp
 
-def upload_place_tag(data):
-	col = db.collection("places")
-	dataDoc = get_unique_id()
-	col.document(dataDoc).create(data)
-	return dataDoc
-
-def upload_photo_data(data):
-	col = db.collection("photos")
-	dataDoc = get_unique_id()
-	col.document(dataDoc).create(data)
-	return dataDoc
-
 def get_all_locations():
 	docs = db.collection("places").stream()
 	locations = []
@@ -52,6 +40,12 @@ def get_all_photos_in_location(locationRef):
 	for doc in docs:
 		photoDocs.append(doc.to_dict())
 	return photoDocs
+
+def upload_document(collection, data):
+	col = db.collection(collection)
+	dataDoc = get_unique_id()
+	col.document(dataDoc).create(data)
+	return dataDoc
 
 def update_document(collection, id, data):
 	ref = db.collection(collection).document(id)

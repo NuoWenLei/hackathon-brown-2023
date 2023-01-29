@@ -6,4 +6,7 @@ def locationVerifier(newLong, newLat, placeLong, placeLat):
     place3words = geocoder.convert_to_3wa(what3words.Coordinates(placeLong, placeLat))
     return new3words == place3words
 
+def locationToW3W(lon, lat):
+    return geocoder.convert_to_3wa(what3words.Coordinates(lon, lat))
+
 print(locationVerifier(51.521251, 0.203586, 51.521251, 0.203583))

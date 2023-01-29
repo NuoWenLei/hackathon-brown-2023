@@ -6,8 +6,9 @@ from image_processing import image_to_byte_array
 from fastapi import FastAPI, File, UploadFile, Form
 from pydantic import BaseModel
 from firestore import upload_image_bytearray_to_filename, get_unique_id,\
-    upload_photo_data, upload_place_tag, get_all_locations, get_location_w3w,\
-        update_document, get_document
+    get_all_locations, get_location_w3w, update_document, get_document, \
+        upload_document
+from locationVerifier import locationToW3W
 
 
 # To run app
@@ -42,8 +43,9 @@ def get_pin_w3w(w3w: str = Form(...)):
 def add_pin(
     lon: str = Form(...),
     lat: str = Form(...),
-    w3w: str = Form(...),
     imageRef: str = Form(...)):
+
+    w3w = locationToW3W(lon, lat)
 
     place_data = {
         "lon": lon,
@@ -52,8 +54,36 @@ def add_pin(
         "latest_image": imageRef,
         "num_images": 1
     }
-    placeRef = upload_place_tag(place_data)
+    placeRef = upload_document("places", place_data)
     return placeRef
+
+@app.post("/collage")
+def post_collage(
+    locationId: str = Form(...),
+    file_: str = Form(...),
+    comments: list = Form(...),
+    timestamps: list = Form(...)
+    ):
+
+    locationDoc = get_document("places", locationId)
+
+    im = Image.open(io.BytesIO(base64.b64decode(re.sub('^data:image/.+;base64,', '', file_))))
+    im_resized_byte_array = image_to_byte_array(im)
+    filename = get_unique_id() + ".jpg"
+
+    fileRef = upload_image_bytearray_to_filename(im_resized_byte_array, filename)
+    collageMetadata = {
+        "location": locationId,
+        "collageRef": fileRef,
+        "comments": comments,
+        "timestamps": timestamps,
+        "timestamp": datetime.datetime.utcnow().timestamp()
+    }
+
+    dataRef = upload_document("collage", collageMetadata)
+
+    update_document("places", locationId, {"collageRef": dataRef})
+    return dataRef
 
 @app.post("/photo")
 def post_photo(
@@ -75,7 +105,7 @@ def post_photo(
         "timestamp": datetime.datetime.utcnow().timestamp()
 
     }
-    dataRef = upload_photo_data(photoMetadata)
+    dataRef = upload_document("photos", photoMetadata)
     update_document("places", locationId, {"latest_image": dataRef, "num_images": locationDoc["num_images"] + 1})
     return dataRef
 
