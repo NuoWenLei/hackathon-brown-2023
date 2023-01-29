@@ -44,7 +44,7 @@ def add_pin(
     file_: str = Form(...),
     comment: str = Form(...)):
 
-    w3w = locationToW3W(lon, lat)
+    w3w = locationToW3W(float(lon), float(lat))
 
     place_data = {
         "lon": lon,
